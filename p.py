@@ -1,28 +1,17 @@
-import joblib
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-import io  # For in-memory CSV download
 
-# Load the trained model
-classifier = joblib.load('classifier.pkl')
-
-@st.cache()
+@st.cache_data()
 def prediction(Gender, Married, ApplicantIncome, LoanAmount, Credit_History):   
-    # Pre-process user input
-    Gender = 0 if Gender == "Male" else 1
-    Married = 0 if Married == "Unmarried" else 1
-    Credit_History = 0 if Credit_History == "Unclear Debts" else 1
-    LoanAmount = LoanAmount / 1000  # Scale loan amount if required
-
-    # Create the feature array with exactly the 5 features
-    features = np.array([Gender, Married, ApplicantIncome, LoanAmount, Credit_History]).reshape(1, -1)
-
-    # Predict directly without scaling (assuming model was trained on non-scaled data)
-    prediction = classifier.predict(features)
-    return 'Approved' if prediction == 1 else 'Rejected'
+    # Simple rule-based logic to replace the model:
+    # If income is high, loan amount is low, and credit history is good, approve.
+    if ApplicantIncome > 5000 and LoanAmount < 150000 and Credit_History == "No Unclear Debts":
+        return 'Approved'
+    else:
+        return 'Rejected'
 
 # Streamlit Interface
 def main():
@@ -67,22 +56,8 @@ def main():
             - **Loan Amount Requested**: ${LoanAmount}
             - **Credit History**: {Credit_History}
 
-            **Decision**: The loan application was **{result}** based on the applicant's profile and historical approval criteria.
+            **Decision**: The loan application was **{result}** based on the applicant's profile and basic approval criteria.
         """)
-
-        # Applicant Insights
-        st.write("---")
-        st.subheader("Applicant Insights")
-        if result == "Rejected":
-            st.write("""
-                - **Suggested Actions**: Improve credit history by reducing unclear debts, or consider a lower loan request.
-                - **Note**: Approval may increase with a requested loan amount closer to your income level.
-            """)
-        else:
-            st.write("""
-                - **Your profile appears strong based on monthly income and credit history.**
-                - **Continue maintaining good credit to support future approvals.**
-            """)
 
         # Visualization Section
         st.write("---")
@@ -136,25 +111,6 @@ def main():
         else:
             st.write("🔍 **Explanation**: Your requested loan amount is within an affordable range based on your income level.")
 
-        # Downloadable CSV Report
-        st.write("---")
-        st.subheader("Download Application Data")
-        applicant_data = pd.DataFrame({
-            "Gender": [Gender],
-            "Marital Status": [Married],
-            "Monthly Income": [ApplicantIncome],
-            "Loan Amount": [LoanAmount],
-            "Credit History": [Credit_History],
-            "Decision": [result]
-        })
-        csv = applicant_data.to_csv(index=False)
-        st.download_button(
-            label="Download Application Data as CSV",
-            data=csv,
-            file_name="Loan_Application_Data.csv",
-            mime="text/csv"
-        )
-
     # Additional Information Section
     st.write("---")
     with st.expander("About This Tool"):
@@ -164,8 +120,8 @@ def main():
         """)
     with st.expander("How the Prediction Works"):
         st.write("""
-            This tool uses a machine learning model trained on historical loan data. It evaluates factors such as gender, marital status, income,
-            loan amount, and credit history to predict the approval outcome based on past trends.
+            This tool uses a simplified rule-based logic. It evaluates factors such as gender, marital status, income,
+            loan amount, and credit history to predict the approval outcome.
         """)
     with st.expander("Why Was My Application Rejected?"):
         st.write("""
