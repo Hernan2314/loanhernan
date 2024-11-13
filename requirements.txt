@@ -1,6 +1,5 @@
 streamlit
 scikit-learn
-pickle
 pandas
 altair
 seaborn
