@@ -8,8 +8,8 @@ import pandas as pd
 import io  # For in-memory CSV download
 
 # Load the trained model
-with open('classifier.pkl', 'rb') as pickle_in:
-    classifier = pickle.load(pickle_in)
+pickle_in = open('classifier.pkl', 'rb') 
+classifier = pickle.load(pickle_in)
 
 @st.cache_data()
 def prediction(Gender, Married, ApplicantIncome, LoanAmount, Credit_History):   
