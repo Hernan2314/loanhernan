@@ -1,5 +1,4 @@
 import joblib
-import pickle  # Importing the pickle library
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,9 +6,8 @@ import seaborn as sns
 import pandas as pd
 import io  # For in-memory CSV download
 
-# Load the trained model
-with open('classifier.pkl', 'rb') as pickle_in:
-    classifier = pickle.load(pickle_in)
+# Load the trained model using joblib
+classifier = joblib.load('classifier.pkl')
 
 @st.cache_data()
 def prediction(Gender, Married, ApplicantIncome, LoanAmount, Credit_History):   
@@ -71,20 +69,6 @@ def main():
 
             **Decision**: The loan application was **{result}** based on the applicant's profile and historical approval criteria.
         """)
-
-        # Applicant Insights
-        st.write("---")
-        st.subheader("Applicant Insights")
-        if result == "Rejected":
-            st.write("""
-                - **Suggested Actions**: Improve credit history by reducing unclear debts, or consider a lower loan request.
-                - **Note**: Approval may increase with a requested loan amount closer to your income level.
-            """)
-        else:
-            st.write("""
-                - **Your profile appears strong based on monthly income and credit history.**
-                - **Continue maintaining good credit to support future approvals.**
-            """)
 
         # Visualization Section
         st.write("---")
@@ -179,3 +163,5 @@ if __name__ == '__main__':
     main()
 
 
+  
+ 
