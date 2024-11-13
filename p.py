@@ -9,7 +9,7 @@ import io  # For in-memory CSV download
 # Load the trained model
 classifier = joblib.load('classifier.pkl')
 
-@st.cache_data()
+@st.cache()
 def prediction(Gender, Married, ApplicantIncome, LoanAmount, Credit_History):   
     # Pre-process user input
     Gender = 0 if Gender == "Male" else 1
