@@ -1,4 +1,5 @@
 import joblib
+import pickle  # Importing the pickle library
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,10 +8,10 @@ import pandas as pd
 import io  # For in-memory CSV download
 
 # Load the trained model
-pickle_in = open('classifier.pkl', 'rb') 
-classifier = pickle.load(pickle_in)
+with open('classifier.pkl', 'rb') as pickle_in:
+    classifier = pickle.load(pickle_in)
 
-@st.cache()
+@st.cache_data()
 def prediction(Gender, Married, ApplicantIncome, LoanAmount, Credit_History):   
     # Pre-process user input
     Gender = 0 if Gender == "Male" else 1
@@ -176,4 +177,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
