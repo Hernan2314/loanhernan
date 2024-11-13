@@ -10,7 +10,7 @@ import io  # For in-memory CSV download
 pickle_in = open('classifier.pkl', 'rb') 
 classifier = pickle.load(pickle_in)
 
-@st.cache_data()
+@st.cache()
 def prediction(Gender, Married, ApplicantIncome, LoanAmount, Credit_History):   
     # Pre-process user input
     Gender = 0 if Gender == "Male" else 1
